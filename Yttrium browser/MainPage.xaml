@@ -25,7 +25,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="45" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="32" />
             </Grid.RowDefinitions>
 
             <!-- titlebar drag area -->
@@ -178,19 +177,6 @@
 
                 </winui:TabViewItem>
             </winui:TabView>
-
-            <!-- statusbar text -->
-            <TextBlock x:Name="StatusText"
-                       Grid.Row="2"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Left"
-                       Grid.ColumnSpan="4"
-                       Margin="10,0,10,0"
-                       Height="19"
-                       Canvas.ZIndex="1" />
-
-
-
         </Grid>
     </Grid>
 </Page>

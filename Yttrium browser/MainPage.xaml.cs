@@ -69,7 +69,6 @@ namespace Yttrium_browser
             //website load status
             try
             {
-                StatusText.Text = WebBrowser.Source.AbsoluteUri;
                 WebBrowser.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 //appTitle.Text = "Yttrium browser | " + WebBrowser.CoreWebView2.DocumentTitle;
                 SearchBar.Text = WebBrowser.Source.AbsoluteUri;
