@@ -34,11 +34,11 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v1.0.2
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Build the application
-        run: msbuild Yttrium browser\Yttrium Browser.csproj /restore /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:ReleaseDirectory=..\$env:RELEASE_DIR /p:ZipName=$env:ZIP_FILE /t:ReleaseZip
+        run: msbuild Yttrium\Yttrium.csproj /restore /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:ReleaseDirectory=..\$env:RELEASE_DIR /p:ZipName=$env:ZIP_FILE /t:ReleaseZip
         env:
          Configuration: ${{ matrix.configuration }}
          Platform: ${{ matrix.platform }}
@@ -51,13 +51,7 @@ jobs:
           if-no-files-found: error
 
       - name: Clean Yttrium
-        run: msbuild Yttrium browser.sln /p:Configuration=$env:Configuration /p:Platform=$env:Platform /t:Clean
-        env:
-         Configuration: ${{ matrix.configuration }}
-         Platform: ${{ matrix.platform }}
-
-      - name: Package as MSIX
-        run: msbuild MicaForEveryone.Package\MicaForEveryone.Package.wapproj /restore /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:AppxBundlePlatforms=$env:Platform /p:ErrorOnDuplicatePublishOutputFiles=false /p:ReleaseDirectory=..\$env:RELEASE_DIR /p:MsixName=$env:MSIX_FILE /t:ReleaseMsix
+        run: msbuild Yttrium.sln /p:Configuration=$env:Configuration /p:Platform=$env:Platform /t:Clean
         env:
          Configuration: ${{ matrix.configuration }}
          Platform: ${{ matrix.platform }}
