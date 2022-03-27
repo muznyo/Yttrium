@@ -31,8 +31,8 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
 
 
-      - name: Build UWP utilities
-        run: msbuild /m /t:Yttrium /restore /p:Platform=${{ matrix.architecture }} /p:MsixBundle=$env:MsixBundle /p:MsixBundlePlatforms="${{ matrix.architecture }}" /p:MsixPackageDir=${{ github.workspace }}\artifacts\win-${{ matrix.architecture }} /p:MsixPackageSigningEnabled=false /p:RuntimeIdentifier=win-${{ matrix.architecture }} /p:PublishDir=${{ github.workspace }}\artifacts\win-${{ matrix.architecture }}/UWP /p:PublishSingleFile=true /p:Configuration=Release Yttrium.sln
+      - name: Build
+        run: msbuild /m /t:Yttrium /restore /p:Platform=${{ matrix.architecture }} /p:MsixBundle=$env:MsixBundle /p:MsixBundlePlatforms="${{ matrix.architecture }}" /p:MsixPackageDir=${{ github.workspace }}\artifacts\win-${{ matrix.architecture }} /p:MsixPackageSigningEnabled=false /p:RuntimeIdentifier=win-${{ matrix.architecture }} /p:PublishDir=${{ github.workspace }}\artifacts\win-${{ matrix.architecture }}/AutoBuild /p:PublishSingleFile=true /p:Configuration=Release Yttrium.sln
         env:
           MsixBundle: Always
           BuildMode: SideloadOnly
