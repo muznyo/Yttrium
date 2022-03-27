@@ -254,27 +254,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="ReleaseZip" DependsOnTargets="CleanUnusedFiles">
-    <PropertyGroup>
-      <ReleaseDirectory Condition="'$(ReleaseDirectory)'==''">..\Release</ReleaseDirectory>
-      <ZipName Condition="'$(ZipName)'==''">$(MSBuildProjectName)-$(Platform)-$(Configuration).zip</ZipName>
-    </PropertyGroup>
-    <MakeDir Directories="$(ReleaseDirectory)" />
-    <ZipDirectory SourceDirectory="$(OutDir)" DestinationFile="$(ReleaseDirectory)\$(ZipName)" Overwrite="true" />
-  </Target>
-
-  <Target Name="CleanUnusedFiles" DependsOnTargets="Build">
-    <Message Text="Removing unnecessary files..." />
-    <RemoveDir Directories="$(OutDir)Assets;$(OutDir)fr;$(OutDir)Microsoft.UI.Xaml;$(OutDir)Properties;$(OutDir)runtimes\unix;$(OutDir)runtimes\win10-arm;$(OutDir)runtimes\win10-x86" />
-  </Target>
-
-  <Target Name="CleanArm64Binaries" AfterTargets="CleanUnusedFiles" Condition="'$(Platform)'=='x64'">
-    <Message Text="Removing arm64 binary files..." />
-    <RemoveDir Directories="$(OutDir)runtimes\win10-arm64" />
-  </Target>
-
-  <Target Name="CleanX64Binaries" AfterTargets="CleanUnusedFiles" Condition="'$(Platform)'=='arm64'">
-    <Message Text="Removing x64 binary files..." />
-    <RemoveDir Directories="$(OutDir)runtimes\win10-x64" />
-  </Target>
 </Project>
