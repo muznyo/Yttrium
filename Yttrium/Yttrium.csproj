@@ -7,8 +7,8 @@
     <ProjectGuid>{1D1D01E7-FECF-4441-A230-240A15D7D624}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Yttrium_browser</RootNamespace>
-    <AssemblyName>Yttrium browser</AssemblyName>
+    <RootNamespace>Yttrium</RootNamespace>
+    <AssemblyName>Yttrium</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
