@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        architecture: [x86, x64, arm, arm64]
+        architecture: [x86, x64, arm64]
     steps:
       - name: Configure Pagefile
         uses: al-cheb/configure-pagefile-action@v1.2
@@ -32,11 +32,8 @@ jobs:
 
 
       - name: Build
-        run: msbuild /m /t:Yttrium /restore /p:AppxBundlePlatforms=${{ matrix.architecture }} /p:AppxBundle=Always /p:UapAppxPackageBuildMode=Sideload /p:AppxPackageDir=root/artifacts/platform-config/ /p:AppxPackageSigningEnabled=false /p:Configuration=Release Yttrium.sln
-        env:
-          MsixBundle: Always
-          BuildMode: SideloadOnly
-          Configuration: Release
+        run: |
+          msbuild /t:build -restore Yttrium.sln /p:Platform="x64|x86|arm64" /p:Configuration="Release" /p:AppxBundle="Always" /p:AppxBundlePlatforms="x64|x86|arm64|" /p:AppxPackageDir="$pwd\build" /p:UapAppxPackageBuildMode="SideloadOnly" 
 
 
       - name: Upload artifact
