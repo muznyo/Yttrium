@@ -32,7 +32,7 @@ jobs:
 
 
       - name: Build
-        run: msbuild /m /t:Yttrium /restore /p:Platform=${{ matrix.architecture }} /p:AppxBundle=False /p:AppxPackageDir=${{ github.workspace }}\artifacts\win-${{ matrix.architecture }} /p:AppxPackageSigningEnabled=false /p:Configuration=Release Yttrium.sln
+        run: msbuild /m /t:Yttrium /restore /p:AppxBundlePlatforms=${{ matrix.architecture }} /p:AppxBundle=Always /p:UapAppxPackageBuildMode=Sideload /p:AppxPackageDir=root/artifacts/platform-config/ /p:AppxPackageSigningEnabled=false /p:Configuration=Release Yttrium.sln
         env:
           MsixBundle: Always
           BuildMode: SideloadOnly
@@ -42,5 +42,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: win-${{ matrix.architecture }}
-          path: ${{ github.workspace }}/artifacts/win-${{ matrix.architecture }}
+          name: yttrium
+          path: root/artifacts/platform-config/
