@@ -30,7 +30,7 @@ jobs:
         env: 
           encoded_cert: ${{ secrets.encoded_cert }}
           cert_password: ${{ secrets.cert_password }}
-      - run: |
+        run: |
           [System.IO.File]::WriteAllBytes("$pwd\Yttrium_TemporaryKey.pfx", [Convert]::FromBase64String($env:encoded_cert))
 
       - name: Add MSBuild to PATH
