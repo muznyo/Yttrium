@@ -39,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: yttrium
-          path: root/artifacts/platform-config/
+          path: D:/a/Yttrium/Yttrium/build
