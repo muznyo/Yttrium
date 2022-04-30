@@ -6,8 +6,12 @@
       mc:Ignorable="d"
       xmlns:winui="using:Microsoft.UI.Xaml.Controls"
       winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
-      x:Name="MainWindow"
-    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
+      x:Name="MainWindow">
+    <Page.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{ThemeResource ControlFillColorDefault}"  />
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid x:Name="BaseGrid">
         <Grid x:Name="TitleBarGrid"
               Grid.Row="0"
@@ -86,7 +90,6 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Click="HomeButton_Click"
-                        IsEnabled="False"
                         Padding="8.5">
                     <FontIcon Glyph="&#xE80F;"
                               FontSize="15" />
@@ -164,17 +167,18 @@
                 <winui:TabView.TabStripFooter>
                     <Grid/>
                 </winui:TabView.TabStripFooter>
-                <winui:TabViewItem Header="Blank">
+                <winui:TabViewItem x:Name="FirstTab" Header="Blank" winui:BackdropMaterial.ApplyToRootOrPageBackground="True">
                     <winui:TabViewItem.IconSource>
-                        <winui:SymbolIconSource Symbol="Add" />
+                        <winui:SymbolIconSource Symbol="Home" />
                     </winui:TabViewItem.IconSource>
-                    <!-- webview -->
-                    <winui:WebView2 NavigationStarting="WebBrowser_NavigationStarting"
+                    <Frame x:Name="TabContent">
+                        <!-- webview -->
+                        <winui:WebView2 NavigationStarting="WebBrowser_NavigationStarting"
                                     NavigationCompleted="WebBrowser_NavigationCompleted"
                                     x:Name="WebBrowser"
                                     Visibility="Visible"
                                     Source="https://google.com/" />
-
+                    </Frame>
                 </winui:TabViewItem>
             </winui:TabView>
         </Grid>

@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="62b3ecf5-f123-4873-9bfb-b6d325b51f33"
-    Publisher="CN=omuzn"
+    Name="Yttrium.Browser"
+    Publisher="CN=muznyo"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="62b3ecf5-f123-4873-9bfb-b6d325b51f33" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Yttrium browser</DisplayName>
-    <PublisherDisplayName>omuzn</PublisherDisplayName>
+    <DisplayName>Yttrium</DisplayName>
+    <PublisherDisplayName>muznyo</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="Yttrium_browser.App">
       <uap:VisualElements
-        DisplayName="Yttrium browser"
+        DisplayName="Yttrium"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Yttrium browser"

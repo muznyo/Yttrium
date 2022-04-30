@@ -18,7 +18,7 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>CE905C3896D35C998F19DF9FA519165974A97FCD</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>574EDF641D18648939DDB13E662AC4B6845B3102</PackageCertificateThumbprint>
     <PackageCertificateKeyFile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -99,6 +99,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataTransfer.cs" />
+    <Compile Include="HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -181,6 +184,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -201,20 +208,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TabViewCustom.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.13</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>7.1.2</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.0-prerelease.220118001</Version>
+      <Version>2.8.0-prerelease.220413001</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

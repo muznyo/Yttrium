@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Yttrium;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -24,35 +25,34 @@ namespace Yttrium_browser
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
-    {
+    {        
         public MainPage()
         {
             this.InitializeComponent();
             //creates settings file on app first launch
             SettingsData settings = new SettingsData();
             settings.CreateSettingsFile();
-            this.NavigationCacheMode = NavigationCacheMode.Required;
-
 
         }
 
         //back navigation
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WebBrowser.CanGoBack)
-            {
-                WebBrowser.GoBack();
-
-            }
+                TabContent.Content = WebBrowser;
+                if (WebBrowser.CanGoBack)
+                {
+                    WebBrowser.GoBack();
+                }
         }
 
         //forward navigation
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WebBrowser.CanGoForward)
-            {
-                WebBrowser.GoForward();
-            }
+
+                if (WebBrowser.CanGoForward)
+                {
+                    WebBrowser.GoForward();
+                }
 
         }
 
@@ -87,12 +87,10 @@ namespace Yttrium_browser
 
             }
 
-            bool isSSL = false;
 
             if (WebBrowser.Source.AbsoluteUri.Contains("https"))
             {
                 //change icon to lock
-                isSSL = true;
                 SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
                 SSLIcon.Glyph = "\xE72E";
 
@@ -106,7 +104,6 @@ namespace Yttrium_browser
             else
             {
                 //change icon to warning
-                isSSL = false;
                 SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
                 SSLIcon.Glyph = "\xE7BA";
                 ToolTip tooltip = new ToolTip
@@ -140,7 +137,9 @@ namespace Yttrium_browser
                 if (e.Key == Windows.System.VirtualKey.Enter && WebBrowser != null && WebBrowser.CoreWebView2 != null)
                 {
                     Search();
-                }
+                TabContent.Content = WebBrowser;
+            }
+
         }
 
         //if clicked on SearchBar, the text will be selected
@@ -162,7 +161,7 @@ namespace Yttrium_browser
         //home button redirects to homepage
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-
+            TabContent.Content = new HomePage();
         }
 
         //opens settings page
@@ -191,19 +190,17 @@ namespace Yttrium_browser
 
         }
 
-        private async void Tabs_AddTabButtonClick(TabView sender, object args)
+        private void Tabs_AddTabButtonClick(TabView sender, object args)
         {
             var newTab = new Microsoft.UI.Xaml.Controls.TabViewItem
             {
-                IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Document },
-                Header = "Blank page"
+                IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Home },
+                Header = "Home page"
             };
-
-            WebView2 webView = new WebView2();
-            await webView.EnsureCoreWebView2Async();
-            webView.CoreWebView2.Navigate("https://google.com");
-
-            newTab.Content = webView;
+            //WebView2 webView = new WebView2();
+            //await webView.EnsureCoreWebView2Async();
+            //webView.CoreWebView2.Navigate("https://google.com");
+            newTab.Content = new HomePage();
             sender.TabItems.Add(newTab);
             sender.SelectedItem = newTab;
         }
