@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,14 +25,21 @@ namespace Yttrium_browser
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
-    {        
+    {
+        string OriginalUserAgent;
+        string GoogleSignInUserAgent;
         public MainPage()
         {
             this.InitializeComponent();
             //creates settings file on app first launch
             SettingsData settings = new SettingsData();
             settings.CreateSettingsFile();
-
+            WebBrowser.CoreWebView2Initialized += delegate
+            {
+                OriginalUserAgent = WebBrowser.CoreWebView2.Settings.UserAgent;
+                GoogleSignInUserAgent = OriginalUserAgent.Substring(0, OriginalUserAgent.IndexOf("Edg/"))
+                .Replace("Mozilla/5.0", "Mozilla/4.0");
+            };
         }
 
         //back navigation
@@ -176,6 +183,9 @@ namespace Yttrium_browser
         {
             RefreshButton.Visibility = Visibility.Collapsed;
             StopRefreshButton.Visibility = Visibility.Visible;
+
+            var isGoogleLogin = new Uri(args.Uri).Host.Contains("accounts.google.com");
+            WebBrowser.CoreWebView2.Settings.UserAgent = isGoogleLogin ? GoogleSignInUserAgent : OriginalUserAgent;
         }
 
         //stops refreshing if clicked on progressbar
