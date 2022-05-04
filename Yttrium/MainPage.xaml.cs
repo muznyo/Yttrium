@@ -222,7 +222,14 @@ namespace Yttrium_browser
 
             sender.TabItems.Remove(args.Tab);
         }
+        
+        private async void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog aboutdialog = new AboutDialog();
 
+            var result = await aboutdialog.ShowAsync();
+
+        }
     }
 }
 

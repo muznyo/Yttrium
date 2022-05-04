@@ -1,0 +1,21 @@
+﻿<ContentDialog
+    x:Class="Yttrium.AboutDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Yttrium"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    Title="About Yttrium"
+    PrimaryButtonText="Telegram group"
+    PrimaryButtonStyle="{ThemeResource AccentButtonStyle}"
+    CloseButtonText="Close"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    Style="{StaticResource DefaultContentDialogStyle}">
+    <Grid>
+        <TextBlock>Yttrium is a modern UWP browser with WinUI based on Edge WebView2 technology.</TextBlock>
+
+    </Grid>
+
+</ContentDialog>

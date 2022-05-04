@@ -145,6 +145,13 @@
                                 <FontIcon Glyph="&#xE713;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Name="AboutMenuItem"
+                                        Text="About"
+                                        Click="AboutMenuItem_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE946;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                     </MenuFlyout>
                 </Button.Flyout>
 
