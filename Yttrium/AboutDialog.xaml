@@ -14,7 +14,7 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     Style="{StaticResource DefaultContentDialogStyle}">
     <Grid>
-        <TextBlock>Yttrium is a modern UWP browser with WinUI based on Edge WebView2 technology.</TextBlock>
+        <TextBlock TextWrapping="Wrap">Yttrium is a modern UWP browser with WinUI based on Edge WebView2 technology.</TextBlock>
 
     </Grid>
 
