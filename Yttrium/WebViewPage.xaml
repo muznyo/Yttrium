@@ -1,0 +1,21 @@
+﻿<Page
+    x:Class="Yttrium.WebViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True">
+
+
+    <Frame x:Name="TabContent" x:FieldModifier="public">
+        <!-- webview -->
+        <winui:WebView2 NavigationStarting="WebBrowser_NavigationStarting"
+                NavigationCompleted="WebBrowser_NavigationCompleted"
+                x:Name="WebBrowser"
+                Visibility="Visible"
+                Source="https://google.com/"
+                x:FieldModifier="public"/>
+    </Frame>
+</Page>

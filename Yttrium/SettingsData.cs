@@ -8,7 +8,7 @@ using System.Xml;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace Yttrium_browser
+namespace Yttrium
 {
     public class SettingsData
     {

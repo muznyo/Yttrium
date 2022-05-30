@@ -14,18 +14,48 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Yttrium;
+
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace Yttrium_browser
+namespace Yttrium
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public WebView2 WebBrowser
+        {
+            get
+            {
+                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewPage webViewPage)
+                {
+                    return webViewPage.WebBrowser;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public Frame TabContent
+        {
+            get
+            {
+                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewPage webViewPage)
+                {
+                    return webViewPage.TabContent;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         string OriginalUserAgent;
         string GoogleSignInUserAgent;
 
@@ -86,6 +116,7 @@ namespace Yttrium_browser
                 Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
                 FirstTab.IconSource = new Microsoft.UI.Xaml.Controls.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
                 FirstTab.Header = WebBrowser.CoreWebView2.DocumentTitle.ToString();
+
                 SearchBar.Text = WebBrowser.Source.AbsoluteUri;
                 RefreshButton.Visibility = Visibility.Visible;
                 StopRefreshButton.Visibility = Visibility.Collapsed;
@@ -179,13 +210,13 @@ namespace Yttrium_browser
 
             WebBrowser.Source = new Uri("https://www.google.com/search?q=" + SearchBar.Text);
             //SearchBar.Text = newTab.Content == new HomePage() ? "Home page" : WebBrowser.Source.AbsoluteUri;
-            TabContent.Content = WebBrowser;
+            //TabContent.Content = WebBrowser;
         }
 
         //home button redirects to homepage
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            TabContent.Content = new HomePage();
+            //TabContent.Content = new HomePage();
             SearchBar.Text = "Home page";
         }
 
@@ -235,6 +266,7 @@ namespace Yttrium_browser
                 IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Home },
                 Header = "Home page"
             });
+            new Frame().Navigate(typeof(HomePage));
             sender.SelectedItem = Tabs.TabItems.Last();
         }
 
@@ -266,6 +298,18 @@ namespace Yttrium_browser
             {
                 SearchBar.Text = WebBrowser.Source.AbsoluteUri;
             }
+        }
+
+        private void Tabs_Loaded(object sender, RoutedEventArgs e)
+        {
+            Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
+            new TabViewItem()
+            {
+
+                Content = new WebView2(),
+                IconSource = new Microsoft.UI.Xaml.Controls.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false },
+                Header = WebBrowser.CoreWebView2.DocumentTitle.ToString()
+            };
         }
 
     }

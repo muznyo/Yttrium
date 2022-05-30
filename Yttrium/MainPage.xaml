@@ -1,15 +1,19 @@
-﻿<Page x:Class="Yttrium_browser.MainPage"
+﻿<Page x:Class="Yttrium.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
       xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+      xmlns:local="using:Yttrium"
       winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
       x:Name="MainWindow">
     <Page.Resources>
         <ResourceDictionary>
             <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{ThemeResource ControlFillColorDefault}"  />
+            <Style TargetType="winui:TabViewItem" x:Key="winui:BackdropMaterial.ApplyToRootOrPageBackground" >
+                <Setter Property="winui:BackdropMaterial.ApplyToRootOrPageBackground" Value="True" />
+            </Style>
         </ResourceDictionary>
     </Page.Resources>
     <Grid x:Name="BaseGrid">
@@ -168,23 +172,16 @@
                            VerticalAlignment="Stretch"
                            AddTabButtonClick="Tabs_AddTabButtonClick"
                            TabCloseRequested="Tabs_TabCloseRequested"
-                           SelectionChanged="Tabs_SelectionChanged">
+                           SelectionChanged="Tabs_SelectionChanged"
+                           Loaded="Tabs_Loaded">
                 <winui:TabView.TabStripHeader>
                     <Grid/>
                 </winui:TabView.TabStripHeader>
                 <winui:TabView.TabStripFooter>
                     <Grid/>
                 </winui:TabView.TabStripFooter>
-                <winui:TabViewItem x:Name="FirstTab" Header="Blank" winui:BackdropMaterial.ApplyToRootOrPageBackground="True">
-                    <Frame x:Name="TabContent">
-                        <!-- webview -->
-                        <winui:WebView2 NavigationStarting="WebBrowser_NavigationStarting"
-                                    NavigationCompleted="WebBrowser_NavigationCompleted"
-                                    x:Name="WebBrowser"
-                                    Visibility="Visible"
-                                    Source="https://google.com/"/>
-
-                    </Frame>
+                <winui:TabViewItem x:Name="FirstTab" Header="Blank">
+                    <local:WebViewPage/>
                 </winui:TabViewItem>
             </winui:TabView>
         </Grid>

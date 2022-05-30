@@ -20,9 +20,9 @@ namespace Yttrium
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsPage_History : Page
+    public sealed partial class WebViewPage : Page
     {
-        public SettingsPage_History()
+        public WebViewPage()
         {
             this.InitializeComponent();
         }

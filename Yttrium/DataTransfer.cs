@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 
-namespace Yttrium_browser
+namespace Yttrium
 {
     public class DataTransfer
     {
