@@ -30,7 +30,7 @@ namespace Yttrium
         {
             get
             {
-                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewPage webViewPage)
+                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewTab webViewPage)
                 {
                     return webViewPage.WebBrowser;
                 }
@@ -45,7 +45,7 @@ namespace Yttrium
         {
             get
             {
-                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewPage webViewPage)
+                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewTab webViewPage)
                 {
                     return webViewPage.TabContent;
                 }
@@ -56,25 +56,12 @@ namespace Yttrium
             }
         }
 
-        string OriginalUserAgent;
-        string GoogleSignInUserAgent;
-
         public MainPage()
         {
             this.InitializeComponent();
             //creates settings file on app first launch
             SettingsData settings = new SettingsData();
             settings.CreateSettingsFile();
-
-
-            //google login fix
-            WebBrowser.CoreWebView2Initialized += delegate
-            {
-                OriginalUserAgent = WebBrowser.CoreWebView2.Settings.UserAgent;
-                GoogleSignInUserAgent = OriginalUserAgent.Substring(0, OriginalUserAgent.IndexOf("Edg/"))
-                .Replace("Mozilla/5.0", "Mozilla/4.0");
-            };
-
         }
 
 
@@ -107,76 +94,7 @@ namespace Yttrium
         }
 
         //navigation completed
-        private void WebBrowser_NavigationCompleted(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
-        {
-            //website load status
-            try
-            {
-                WebBrowser.CoreWebView2.Settings.IsStatusBarEnabled = false;
-                Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
-                FirstTab.IconSource = new Microsoft.UI.Xaml.Controls.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
-                FirstTab.Header = WebBrowser.CoreWebView2.DocumentTitle.ToString();
-
-                SearchBar.Text = WebBrowser.Source.AbsoluteUri;
-                RefreshButton.Visibility = Visibility.Visible;
-                StopRefreshButton.Visibility = Visibility.Collapsed;
-
-                //history
-                DataTransfer datatransfer = new DataTransfer();
-                if (!string.IsNullOrEmpty(SearchBar.Text))
-                {
-                    datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
-                }
-            }
-            catch
-            {
-
-            }
-
-
-            if (WebBrowser.Source.AbsoluteUri.Contains("https"))
-            {
-                //change icon to lock
-                SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                SSLIcon.Glyph = "\xE72E";
-
-                ToolTip tooltip = new ToolTip
-                {
-                    Content = "This website has a SSL certificate"
-                };
-                ToolTipService.SetToolTip(SSLButton, tooltip);
-
-            }
-            else
-            {
-                //change icon to warning
-                SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                SSLIcon.Glyph = "\xE7BA";
-                ToolTip tooltip = new ToolTip
-                {
-                    Content = "This website is unsafe and doesn't have a SSL certificate"
-                };
-                ToolTipService.SetToolTip(SSLButton, tooltip);
-
-            }
-
-
-            //            await WebBrowser.EnsureCoreWebView2Async();
-            //            await WebBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
-            //document.addEventListener('DOMContentLoaded', function() {
-            //  const style = document.createElement('style');
-            //  style.textContent = '/* width */ \
-            //::-webkit-scrollbar { \
-            //  width: 20px !important; \
-            //} \
-            // \
-            //::-webkit-scrollbar-track { \
-            //  background: red !important; \
-            //}';
-            //  document.head.append(style);
-            //}, false);");
-        }
-
+        
         //if enter is pressed, it searches text in SearchBar or goes to web page
         private void SearchBar_KeyDown(object sender, KeyRoutedEventArgs e)
         {
@@ -227,15 +145,7 @@ namespace Yttrium
         }
 
 
-        //handles progressring and refresh behavior
-        private void WebBrowser_NavigationStarting(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs args)
-        {
-            RefreshButton.Visibility = Visibility.Collapsed;
-            StopRefreshButton.Visibility = Visibility.Visible;
-
-            var isGoogleLogin = new Uri(args.Uri).Host.Contains("accounts.google.com");
-            WebBrowser.CoreWebView2.Settings.UserAgent = isGoogleLogin ? GoogleSignInUserAgent : OriginalUserAgent;
-        }
+        
 
         //stops refreshing if clicked on progressbar
         private void StopRefreshButton_Click(object sender, RoutedEventArgs e)
@@ -290,28 +200,77 @@ namespace Yttrium
 
         private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (TabContent.Content is HomePage)
+            if (TabContent != null)
             {
-                SearchBar.Text = "Hi";
-            }
-            else
-            {
-                SearchBar.Text = WebBrowser.Source.AbsoluteUri;
+                if (TabContent.Content is HomePage)
+                {
+                    SearchBar.Text = "Hi";
+                }
+                else
+                {
+                    SearchBar.Text = WebBrowser.Source.AbsoluteUri;
+                }
             }
         }
 
         private void Tabs_Loaded(object sender, RoutedEventArgs e)
         {
-            Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
-            new TabViewItem()
-            {
+            // not really needed. we already have a new tab page and also new TabViewItem here does nothing. Also, if this code is used again it should be new WebViewTab()
+            //Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
+            //new TabViewItem()
+            //{
 
-                Content = new WebView2(),
-                IconSource = new Microsoft.UI.Xaml.Controls.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false },
-                Header = WebBrowser.CoreWebView2.DocumentTitle.ToString()
-            };
+            //    Content = new WebView2(),
+            //    IconSource = new Microsoft.UI.Xaml.Controls.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false },
+            //    Header = WebBrowser.CoreWebView2.DocumentTitle.ToString()
+            //};
         }
 
+        private void Tab_NavigationCompleted(WebViewTab sender)
+        {
+            var WebBrowser = sender.WebBrowser;
+            SearchBar.Text = WebBrowser.Source.AbsoluteUri;
+            RefreshButton.Visibility = Visibility.Visible;
+            StopRefreshButton.Visibility = Visibility.Collapsed;
+
+            //history
+            DataTransfer datatransfer = new DataTransfer();
+            if (!string.IsNullOrEmpty(SearchBar.Text))
+            {
+                datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
+            }
+            if (WebBrowser.Source.AbsoluteUri.Contains("https"))
+            {
+                //change icon to lock
+                SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                SSLIcon.Glyph = "\xE72E";
+
+                ToolTip tooltip = new ToolTip
+                {
+                    Content = "This website has a SSL certificate"
+                };
+                ToolTipService.SetToolTip(SSLButton, tooltip);
+
+            }
+            else
+            {
+                //change icon to warning
+                SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                SSLIcon.Glyph = "\xE7BA";
+                ToolTip tooltip = new ToolTip
+                {
+                    Content = "This website is unsafe and doesn't have a SSL certificate"
+                };
+                ToolTipService.SetToolTip(SSLButton, tooltip);
+
+            }
+        }
+
+        private void Tab_NavigationStarting(WebViewTab obj)
+        {
+            RefreshButton.Visibility = Visibility.Collapsed;
+            StopRefreshButton.Visibility = Visibility.Visible;
+        }
     }
 }
 
