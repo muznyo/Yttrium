@@ -28,6 +28,7 @@ namespace Yttrium_browser
     {
         string OriginalUserAgent;
         string GoogleSignInUserAgent;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -43,28 +44,28 @@ namespace Yttrium_browser
                 GoogleSignInUserAgent = OriginalUserAgent.Substring(0, OriginalUserAgent.IndexOf("Edg/"))
                 .Replace("Mozilla/5.0", "Mozilla/4.0");
             };
-            
+
         }
 
 
         //back navigation
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-                TabContent.Content = WebBrowser;
-                if (WebBrowser.CanGoBack)
-                {
-                    WebBrowser.GoBack();
-                }
+            TabContent.Content = WebBrowser;
+            if (WebBrowser.CanGoBack)
+            {
+                WebBrowser.GoBack();
+            }
         }
 
         //forward navigation
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
 
-                if (WebBrowser.CanGoForward)
-                {
-                    WebBrowser.GoForward();
-                }
+            if (WebBrowser.CanGoForward)
+            {
+                WebBrowser.GoForward();
+            }
 
         }
 
@@ -82,7 +83,7 @@ namespace Yttrium_browser
             try
             {
                 WebBrowser.CoreWebView2.Settings.IsStatusBarEnabled = false;
-                Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source); 
+                Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
                 FirstTab.IconSource = new Microsoft.UI.Xaml.Controls.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
                 FirstTab.Header = WebBrowser.CoreWebView2.DocumentTitle.ToString();
                 SearchBar.Text = WebBrowser.Source.AbsoluteUri;
@@ -113,7 +114,7 @@ namespace Yttrium_browser
                     Content = "This website has a SSL certificate"
                 };
                 ToolTipService.SetToolTip(SSLButton, tooltip);
-                   
+
             }
             else
             {
@@ -150,8 +151,8 @@ namespace Yttrium_browser
         {
 
             if (e.Key == Windows.System.VirtualKey.Enter && WebBrowser != null && WebBrowser.CoreWebView2 != null)
-                {
-                    Search();
+            {
+                Search();
             }
 
         }
@@ -175,7 +176,7 @@ namespace Yttrium_browser
             //}
             //string link = "https://" + SearchBar.Text;
             //WebBrowser.CoreWebView2.Navigate(link);
-            
+
             WebBrowser.Source = new Uri("https://www.google.com/search?q=" + SearchBar.Text);
             //SearchBar.Text = newTab.Content == new HomePage() ? "Home page" : WebBrowser.Source.AbsoluteUri;
             TabContent.Content = WebBrowser;
@@ -238,7 +239,7 @@ namespace Yttrium_browser
         }
 
         //close tab
-        private  void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        private void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
             if (sender.TabItems.Count <= 1)
                 Tabs_AddTabButtonClick(sender, args);
@@ -251,18 +252,19 @@ namespace Yttrium_browser
             ContentDialog aboutdialog = new AboutDialog();
 
             var result = await aboutdialog.ShowAsync();
-            
+
         }
-        
+
+
         private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (TabContent.Content is HomePage)
             {
-                SearchBar.Text = "";
+                SearchBar.Text = "Hi";
             }
             else
             {
-                SearchBar.Text = WebBrowser.CoreWebView2.DocumentTitle;
+                SearchBar.Text = WebBrowser.Source.AbsoluteUri;
             }
         }
 

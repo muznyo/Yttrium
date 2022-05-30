@@ -167,7 +167,8 @@
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch"
                            AddTabButtonClick="Tabs_AddTabButtonClick"
-                           TabCloseRequested="Tabs_TabCloseRequested">
+                           TabCloseRequested="Tabs_TabCloseRequested"
+                           SelectionChanged="Tabs_SelectionChanged">
                 <winui:TabView.TabStripHeader>
                     <Grid/>
                 </winui:TabView.TabStripHeader>
