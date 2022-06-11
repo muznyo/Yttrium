@@ -100,9 +100,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataTransfer.cs" />
-    <Compile Include="HomePage.xaml.cs">
-      <DependentUpon>HomePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -130,6 +127,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\HomePage\index.html" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-125.png" />
     <Content Include="Assets\LargeTile.scale-150.png" />
@@ -192,10 +190,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="HomePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -226,7 +220,7 @@
       <Version>6.2.13</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.0-prerelease.220413001</Version>
+      <Version>2.8.0-prerelease.220601001</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

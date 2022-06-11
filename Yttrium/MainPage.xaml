@@ -180,7 +180,7 @@
                 <winui:TabView.TabStripFooter>
                     <Grid/>
                 </winui:TabView.TabStripFooter>
-                <local:WebViewTab NavigationCompleted="Tab_NavigationCompleted" NavigationStarting="Tab_NavigationStarting" />
+                <local:WebViewTab NavigationStarting="Tab_NavigationStarting" NavigationCompleted="Tab_NavigationCompleted"/>
             </winui:TabView>
         </Grid>
     </Grid>

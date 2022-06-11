@@ -1,18 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -39,8 +26,9 @@ namespace Yttrium
                 GoogleSignInUserAgent = OriginalUserAgent.Substring(0, OriginalUserAgent.IndexOf("Edg/"))
                 .Replace("Mozilla/5.0", "Mozilla/4.0");
             };
+
         }
-        private void WebBrowser_NavigationCompleted(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
+        public void WebBrowser_NavigationCompleted(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
         {
             //website load status
             try
@@ -55,9 +43,6 @@ namespace Yttrium
 
             }
             NavigationCompleted?.Invoke(this);
-
-            
-
 
             //await WebBrowser.EnsureCoreWebView2Async();
             //await WebBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
@@ -76,10 +61,10 @@ namespace Yttrium
         }
 
         //handles progressring and refresh behavior
-        private void WebBrowser_NavigationStarting(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs args)
+        public void WebBrowser_NavigationStarting(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs args)
         {
             NavigationStarting?.Invoke(this);
-            
+
             var isGoogleLogin = new Uri(args.Uri).Host.Contains("accounts.google.com");
             WebBrowser.CoreWebView2.Settings.UserAgent = isGoogleLogin ? GoogleSignInUserAgent : OriginalUserAgent;
         }

@@ -1,19 +1,14 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 
 
@@ -30,7 +25,7 @@ namespace Yttrium
         {
             get
             {
-                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewTab webViewPage)
+                if (Tabs.SelectedItem is WebViewTab webViewPage)
                 {
                     return webViewPage.WebBrowser;
                 }
@@ -45,7 +40,7 @@ namespace Yttrium
         {
             get
             {
-                if (Tabs.SelectedItem is TabViewItem tabViewItem && tabViewItem.Content is WebViewTab webViewPage)
+                if (Tabs.SelectedItem is WebViewTab webViewPage)
                 {
                     return webViewPage.TabContent;
                 }
@@ -68,7 +63,6 @@ namespace Yttrium
         //back navigation
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            TabContent.Content = WebBrowser;
             if (WebBrowser.CanGoBack)
             {
                 WebBrowser.GoBack();
@@ -94,7 +88,7 @@ namespace Yttrium
         }
 
         //navigation completed
-        
+
         //if enter is pressed, it searches text in SearchBar or goes to web page
         private void SearchBar_KeyDown(object sender, KeyRoutedEventArgs e)
         {
@@ -102,6 +96,8 @@ namespace Yttrium
             if (e.Key == Windows.System.VirtualKey.Enter && WebBrowser != null && WebBrowser.CoreWebView2 != null)
             {
                 Search();
+                this.Focus(FocusState.Programmatic);
+                SearchBar.Text = WebBrowser.Source.AbsoluteUri;
             }
 
         }
@@ -134,8 +130,19 @@ namespace Yttrium
         //home button redirects to homepage
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            //TabContent.Content = new HomePage();
-            SearchBar.Text = "Home page";
+            WebBrowser.CoreWebView2.Navigate("ms-appx-web:///Assets/HomePage/index.html");
+        }
+
+        public async Task HomePage()
+        {
+            string fname = @"Assets/HomePage/index.html";
+            var contents = "";
+            StorageFolder InstallationFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            StorageFile file = await InstallationFolder.GetFileAsync(fname);
+            if (File.Exists(file.Path))
+            {
+                contents = File.ReadAllText(file.Path);
+            }
         }
 
         //opens settings page
@@ -145,7 +152,7 @@ namespace Yttrium
         }
 
 
-        
+
 
         //stops refreshing if clicked on progressbar
         private void StopRefreshButton_Click(object sender, RoutedEventArgs e)
@@ -170,46 +177,32 @@ namespace Yttrium
             //sender.TabItems.Add(new TabViewItem() { Content = newTab });
             //sender.SelectedItem = newTab ;
             //SearchBar.Text = newTab.Header.ToString();
-            sender.TabItems.Add(new TabViewItem()
-            {
-                Content = new HomePage(),
-                IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Home },
-                Header = "Home page"
-            });
-            new Frame().Navigate(typeof(HomePage));
+            //TabContent.Content = WebBrowser.Source = new Uri("File://Homepage.html");
+            sender.TabItems.Add(new WebViewTab());
             sender.SelectedItem = Tabs.TabItems.Last();
         }
 
         //close tab
-        private void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        private async void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
             if (sender.TabItems.Count <= 1)
-                Tabs_AddTabButtonClick(sender, args);
-
+                await ApplicationView.GetForCurrentView().TryConsolidateAsync();
             sender.TabItems.Remove(args.Tab);
         }
         //opens about app dialog
         private async void AboutMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ContentDialog aboutdialog = new AboutDialog();
-
-            var result = await aboutdialog.ShowAsync();
+            await aboutdialog.ShowAsync();
 
         }
 
 
         private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (TabContent != null)
+            if (WebBrowser != null)
             {
-                if (TabContent.Content is HomePage)
-                {
-                    SearchBar.Text = "Hi";
-                }
-                else
-                {
-                    SearchBar.Text = WebBrowser.Source.AbsoluteUri;
-                }
+                SearchBar.Text = WebBrowser.Source.AbsoluteUri;
             }
         }
 
@@ -271,6 +264,7 @@ namespace Yttrium
             RefreshButton.Visibility = Visibility.Collapsed;
             StopRefreshButton.Visibility = Visibility.Visible;
         }
+
     }
 }
 
