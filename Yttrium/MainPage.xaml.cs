@@ -141,7 +141,6 @@ namespace Yttrium
                 WebBrowser.Source = new Uri("https://www.google.com/search?q=" + searchText);
             }
 
-            WebBrowser.Source = new Uri("https://www.google.com/search?q=" + SearchBar.Text);
             //SearchBar.Text = newTab.Content == new HomePage() ? "Home page" : WebBrowser.Source.AbsoluteUri;
             //TabContent.Content = WebBrowser;
         }
