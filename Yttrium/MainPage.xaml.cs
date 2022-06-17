@@ -121,6 +121,25 @@ namespace Yttrium
             //}
             //string link = "https://" + SearchBar.Text;
             //WebBrowser.CoreWebView2.Navigate(link);
+            String searchText = SearchBar.Text;
+            String searchCopy = searchText;
+            searchCopy = searchCopy.Split('?')[0];
+            searchCopy = searchCopy.Split('/').Last();
+            Boolean hasValidPrefix = searchCopy.Contains('.');
+            Uri uriResult;
+            if (Uri.TryCreate(searchText, UriKind.Absolute, out uriResult) && uriResult.Scheme == Uri.UriSchemeHttp)
+            {
+                WebBrowser.Source = new Uri(searchText);
+            } 
+            else if (!searchText.Contains("http") && hasValidPrefix)
+            {
+                searchText = "https://" + searchText;
+                WebBrowser.Source = new Uri(searchText);
+            }
+            else
+            {
+                WebBrowser.Source = new Uri("https://www.google.com/search?q=" + searchText);
+            }
 
             WebBrowser.Source = new Uri("https://www.google.com/search?q=" + SearchBar.Text);
             //SearchBar.Text = newTab.Content == new HomePage() ? "Home page" : WebBrowser.Source.AbsoluteUri;
