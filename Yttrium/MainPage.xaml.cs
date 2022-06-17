@@ -262,6 +262,7 @@ namespace Yttrium
                     Content = "This website has a SSL certificate"
                 };
                 ToolTipService.SetToolTip(SSLButton, tooltip);
+                SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 68, 210, 78));
 
             }
             else
@@ -274,6 +275,7 @@ namespace Yttrium
                     Content = "This website is unsafe and doesn't have a SSL certificate"
                 };
                 ToolTipService.SetToolTip(SSLButton, tooltip);
+                SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 0, 0));
 
             }
         }
