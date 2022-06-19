@@ -12,7 +12,7 @@ namespace Yttrium
 {
     public class SettingsData
     {
-        public async void CreateSettingsFile()
+        public static async void CreateSettingsFile()
         {
             try
             {

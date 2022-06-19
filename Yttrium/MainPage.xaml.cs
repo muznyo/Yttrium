@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.IO;
 using System.Linq;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -199,9 +200,15 @@ namespace Yttrium
             // Updates the UI
             UpdateComponents();
 
+            // Create Settings file if needed
+            if (!File.Exists(ApplicationData.Current.LocalFolder.Path + "settings.xml"))
+            {
+                SettingsData.CreateSettingsFile();
+            }
+
             // Saves the search history
             DataTransfer datatransfer = new DataTransfer();
-            if (!string.IsNullOrEmpty(SearchBar.Text))
+            if (!string.IsNullOrEmpty(SearchBar.Text) && SearchBar.Text != SettingsPage_General.NewTabHomepage)
             {
                 datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
             }
