@@ -38,8 +38,16 @@ namespace Yttrium
         public MainPage()
         {
             this.InitializeComponent();
+
             // Enables Navigation Cache
             this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+
+            // Create Settings file if needed
+            if (!File.Exists(ApplicationData.Current.LocalFolder.Path + "settings.xml"))
+            {
+                SettingsData.CreateSettingsFile();
+            }
+
             LoadSettings();
         }
 
@@ -152,6 +160,17 @@ namespace Yttrium
             if (WebBrowser != null) UpdateComponents();
         }
 
+        private void Tab_SourceChanged(WebViewTab sender)
+        {
+            UpdateComponents();
+        }
+
+        private void Tab_ContentLoading(WebViewTab sender)
+        {
+            RefreshButton.Visibility = Visibility.Collapsed;
+            StopRefreshButton.Visibility = Visibility.Visible;
+        }
+
         private void Tab_NavigationCompleted(WebViewTab sender)
         {
             UpdateComponents();
@@ -164,9 +183,9 @@ namespace Yttrium
                     if (view.TryEnterFullScreenMode())
                     {
                         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
-                        /** 
-                         * TODO: HIDE TOOLBAR ON FULLSCREEN
-                        **/
+                        // Hides UI
+                        TitleBarGrid.Visibility = Visibility.Collapsed;
+                        Tabs.Margin = new Thickness(0, -86, 0, 0);
                         // The SizeChanged event will be raised when the entry to full-screen mode is complete.
                     }
                 }
@@ -174,9 +193,9 @@ namespace Yttrium
                 {
                     view.ExitFullScreenMode();
                     ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
-                    /** 
-                     * TODO: SHOW TOOLBAR ON FULLSCREEN
-                    **/
+                    // Shows UI
+                    TitleBarGrid.Visibility = Visibility.Visible;
+                    Tabs.Margin = new Thickness(0, -3, 0, 0);
                     // The SizeChanged event will be raised when the exit from full-screen mode is complete.
                 }
                 Tabs.IsAddTabButtonVisible = !fullScreen;
@@ -197,12 +216,6 @@ namespace Yttrium
 
             // Updates the UI
             UpdateComponents();
-
-            // Create Settings file if needed
-            if (!File.Exists(ApplicationData.Current.LocalFolder.Path + "settings.xml"))
-            {
-                SettingsData.CreateSettingsFile();
-            }
 
             // Saves the search history
             DataTransfer datatransfer = new DataTransfer();
@@ -293,8 +306,6 @@ namespace Yttrium
             ToolTipService.SetToolTip(SSLButton, tooltip);
 
         }
-
-
     }
 
 }
