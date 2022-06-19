@@ -18,7 +18,7 @@ namespace Yttrium
         public WebViewTab()
         {
             Header = "New Tab";
-            IconSource = null;
+            IconSource = new BitmapIconSource() { ShowAsMonochrome = false, UriSource = new Uri("ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-48.png") };
             this.InitializeComponent();
             WebBrowser.CoreWebView2Initialized += delegate
             {
@@ -30,7 +30,7 @@ namespace Yttrium
                 WebBrowser.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 WebBrowser.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
                 WebBrowser.CoreWebView2.SetVirtualHostNameToFolderMapping(
-                    "yttrium", "Assets/HomePage", Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
+                    "yttrium", "Assets/NewTabPage", Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
 
                 WebBrowser.Source = new Uri(SettingsPage_General.ObtainHomepage);
             };
@@ -47,7 +47,7 @@ namespace Yttrium
                     Header = WebBrowser.CoreWebView2.DocumentTitle.ToString();
                 }
             }
-            catch {}
+            catch { }
             NavigationCompleted?.Invoke(this);
         }
 

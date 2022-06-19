@@ -1,0 +1,83 @@
+:root {
+    --sys-accent-color: rgba(var(--sys-accent-prop), var(--sys-accent-alpha));
+    --sys-accent-light-3-color: rgba(var(--sys-accent-light-3-prop), var(--sys-accent-light-3-alpha));
+    --sys-error-accent-color: rgba(var(--sys-error-accent-prop), var(--sys-error-accent-alpha));
+    --sys-hover-accent-color: rgba(var(--sys-hover-accent-color), var(--sys-hover-accent-color));
+    --sys-border-radius: 0.5rem;
+}
+
+body {
+    color: #000000;
+}
+
+.banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button {
+    background: var(--sys-accent-color);
+    filter: contrast(50%) brightness(140%);
+    width: 50px;
+    height: 50px;
+    color: black;
+}
+
+
+.content {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+}
+
+.name {
+    margin-left: 10px;
+    font-size: 8vw;
+}
+
+.search {
+    background: rgba(250,250,250.0.3);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50vw;
+    height: 40px;
+    font-size: 22px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 0.3em;
+    border: 1px rgb(229, 229, 229);
+    box-shadow: 0px 0px 5px rgb(229,229,229);
+}
+
+    .search:hover {
+        background: rgba(233, 233, 233,0.3);
+    }
+
+    .search:focus {
+        background: rgb(255,255,255);
+        outline: 10px rgba(79,79,79, 0.3);
+    }
+
+
+@media(prefers-color-scheme: dark) {
+    body {
+        color: #ffffff;
+    }
+
+    .search {
+        background: rgba(79,79,79, 0.3);
+        color: white;
+        box-shadow: none;
+    }
+
+        .search:hover {
+            background: rgba(90,90,90, 0.3);
+        }
+
+        .search:focus {
+            background: rgb(31, 30, 32);
+            outline: 10px rgba(79,79,79, 0.3);
+        }
+}
