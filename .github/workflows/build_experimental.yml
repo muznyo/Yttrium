@@ -1,0 +1,49 @@
+
+name: Experimental branch
+
+on:
+  push:
+    branches: [experimental]
+  pull_request:
+    branches: [experimental]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        architecture: [x64, x86, arm64]
+    steps:
+      - name: Configure Pagefile
+        uses: al-cheb/configure-pagefile-action@v1.2
+        with:
+          minimum-size: 32GB
+          maximum-size: 32GB
+          disk-root: "C:"
+          
+      - name: Checkout
+        uses: actions/checkout@v3
+
+
+      - name: Get Certificate from secret
+        env: 
+          encoded_cert: ${{ secrets.encoded_cert }}
+
+        run: |
+          [System.IO.File]::WriteAllBytes("$pwd\Yttrium_TemporaryKey.pfx", [Convert]::FromBase64String($env:encoded_cert))
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+
+      - name: Build
+        run: msbuild /t:build -restore Yttrium.sln /p:Configuration="Release" /p:AppxBundle="Always" /p:AppxBundlePlatforms="x64|x86|arm64" /p:AppxPackageDir="$pwd\build" /p:UapAppxPackageBuildMode="SideloadOnly" /p:AppxPackageSigningEnabled="true" /p:PackageCertificateThumbprint="" /p:PackageCertificateKeyFile="$pwd\Yttrium_TemporaryKey.pfx" /p:PackageCertificatePassword=$env:cert_password
+        env:
+          cert_password: ${{ secrets.cert_password }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: yttrium
+          path: D:\a\Yttrium\Yttrium\build\*_Test\*
