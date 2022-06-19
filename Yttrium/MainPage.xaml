@@ -199,7 +199,11 @@
                 <winui:TabView.TabStripFooter>
                     <Grid/>
                 </winui:TabView.TabStripFooter>
-                <local:WebViewTab NavigationStarting="Tab_NavigationStarting" NavigationCompleted="Tab_NavigationCompleted"/>
+                <local:WebViewTab 
+                    NavigationStarting="Tab_NavigationStarting" 
+                    NavigationCompleted="Tab_NavigationCompleted"
+                    SourceChanged="Tab_SourceChanged"
+                    ContentLoading="Tab_ContentLoading"/>
             </winui:TabView>
         </Grid>
     </Grid>
