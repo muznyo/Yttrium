@@ -25,7 +25,7 @@ namespace Yttrium
         public SettingsPage()
         {
             this.InitializeComponent();
-            settingsNavView.SelectedItem = FavoritesItem;
+            settingsNavView.SelectedItem = GeneralItem;
         }
 
         private void settingsNavView_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
@@ -42,7 +42,12 @@ namespace Yttrium
             navOptions.IsNavigationStackEnabled = false;
 
             Type pageType = null;
-            if (args.SelectedItem == FavoritesItem)
+            if (args.SelectedItem == GeneralItem)
+            {
+                pageType = typeof(SettingsPage_General);
+                settingsNavView.Header = "General";
+            }
+            else if (args.SelectedItem == FavoritesItem)
             {
                 pageType = typeof(SettingsPage_Favorites);
                 settingsNavView.Header = "Favorites";

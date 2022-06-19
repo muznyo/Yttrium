@@ -1,0 +1,55 @@
+﻿<Page x:Class="Yttrium.SettingsPage_General"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Yttrium"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+      winui:BackdropMaterial.ApplyToRootOrPageBackground="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="55" />
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="On startup" Grid.Column="1" Grid.Row="1" FontSize="20"/>
+
+        <Border Grid.Column="1" Grid.Row="2"
+             Background="{ThemeResource LayerFillColorDefaultBrush}"
+             Padding="16"
+             CornerRadius="8"
+             BorderThickness="1"
+             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+
+            <winui:RadioButtons x:Name="CustomTabGroup" FontSize="6">
+                <RadioButton Content="Open the New Tab page" Checked="RadioButton_Checked" FontSize="14"/>
+                <RadioButton Content="Open your set page" Checked="RadioButton_Checked" FontSize="14"/>
+            </winui:RadioButtons>
+
+        </Border>
+
+        <TextBlock Text="Search Engine" Grid.Column="1" Grid.Row="4" FontSize="20"/>
+
+        <AutoSuggestBox Grid.Column="1" Grid.Row="5"
+                x:Name="SearchEngine"
+                TextChanged="SearchEngine_TextChanged"
+                SuggestionChosen="SearchEngine_SuggestionChosen"
+                KeyDown="SearchEngine_KeyDown"
+                Width="300" AutomationProperties.Name="SearchEngine"/>
+
+    </Grid>
+
+
+</Page>
