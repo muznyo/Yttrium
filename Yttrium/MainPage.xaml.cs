@@ -1,16 +1,13 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-
-
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -25,14 +22,7 @@ namespace Yttrium
         {
             get
             {
-                if (Tabs.SelectedItem is WebViewTab webViewPage)
-                {
-                    return webViewPage.WebBrowser;
-                }
-                else
-                {
-                    return null;
-                }
+                return Tabs.SelectedItem is WebViewTab webViewPage ? webViewPage.WebBrowser : null;
             }
         }
 
@@ -40,51 +30,43 @@ namespace Yttrium
         {
             get
             {
-                if (Tabs.SelectedItem is WebViewTab webViewPage)
-                {
-                    return webViewPage.TabContent;
-                }
-                else
-                {
-                    return null;
-                }
+                return Tabs.SelectedItem is WebViewTab webViewPage ? webViewPage.TabContent : null;
             }
         }
 
         public MainPage()
         {
             this.InitializeComponent();
-            //creates settings file on app first launch
-            SettingsData settings = new SettingsData();
-            settings.CreateSettingsFile();
+            // Enables Navigation Cache
+            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+
+            LoadSettings();
         }
 
+        private void LoadSettings()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings != null) {
+
+            }
+        }
 
         //back navigation
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WebBrowser.CanGoBack)
-            {
-                WebBrowser.GoBack();
-            }
+            if (WebBrowser.CanGoBack) WebBrowser.GoBack();
         }
 
         //forward navigation
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-
-            if (WebBrowser.CanGoForward)
-            {
-                WebBrowser.GoForward();
-            }
-
+            if (WebBrowser.CanGoForward) WebBrowser.GoForward();
         }
 
         //refresh 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             WebBrowser.Reload();
-
         }
 
         //navigation completed
@@ -97,7 +79,6 @@ namespace Yttrium
             {
                 Search();
                 this.Focus(FocusState.Programmatic);
-                SearchBar.Text = WebBrowser.Source.AbsoluteUri;
             }
 
         }
@@ -111,38 +92,17 @@ namespace Yttrium
         //method for search engine + updates link text in SearchBar
         private void Search()
         {
-            //if (SearchBar.Text.Contains("https://") || SearchBar.Text.Contains("http://"))
-            //{
-            //    WebBrowser.Source = new Uri(SearchBar.Text);
-            //}
-            //else
-            //{
-            //    WebBrowser.Source = new Uri("https://www.google.com/search?q=" + SearchBar.Text);
-            //}
-            //string link = "https://" + SearchBar.Text;
-            //WebBrowser.CoreWebView2.Navigate(link);
-
-            WebBrowser.Source = new Uri("https://www.google.com/search?q=" + SearchBar.Text);
-            //SearchBar.Text = newTab.Content == new HomePage() ? "Home page" : WebBrowser.Source.AbsoluteUri;
-            //TabContent.Content = WebBrowser;
+            String searchText = SearchBar.Text;
+            if (searchText != "")
+            {
+                LoadWebsite(searchText);
+            }
         }
 
         //home button redirects to homepage
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            WebBrowser.CoreWebView2.Navigate("ms-appx-web:///Assets/HomePage/index.html");
-        }
-
-        public async Task HomePage()
-        {
-            string fname = @"Assets/HomePage/index.html";
-            var contents = "";
-            StorageFolder InstallationFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-            StorageFile file = await InstallationFolder.GetFileAsync(fname);
-            if (File.Exists(file.Path))
-            {
-                contents = File.ReadAllText(file.Path);
-            }
+            LoadWebsite(SettingsPage_General.ObtainHomepage);
         }
 
         //opens settings page
@@ -150,9 +110,6 @@ namespace Yttrium
         {
             this.Frame.Navigate(typeof(SettingsPage));
         }
-
-
-
 
         //stops refreshing if clicked on progressbar
         private void StopRefreshButton_Click(object sender, RoutedEventArgs e)
@@ -170,14 +127,6 @@ namespace Yttrium
         //add new tab
         private void Tabs_AddTabButtonClick(TabView sender, object args)
         {
-            //WebView2 webView = new WebView2();
-            //await webView.EnsureCoreWebView2Async();
-            //webView.CoreWebView2.Navigate("https://google.com");
-            //newTab.Content = new HomePage();
-            //sender.TabItems.Add(new TabViewItem() { Content = newTab });
-            //sender.SelectedItem = newTab ;
-            //SearchBar.Text = newTab.Header.ToString();
-            //TabContent.Content = WebBrowser.Source = new Uri("File://Homepage.html");
             sender.TabItems.Add(new WebViewTab());
             sender.SelectedItem = Tabs.TabItems.Last();
         }
@@ -189,74 +138,48 @@ namespace Yttrium
                 await ApplicationView.GetForCurrentView().TryConsolidateAsync();
             sender.TabItems.Remove(args.Tab);
         }
+
         //opens about app dialog
         private async void AboutMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ContentDialog aboutdialog = new AboutDialog();
             await aboutdialog.ShowAsync();
-
         }
-
 
         private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (WebBrowser != null)
-            {
-                SearchBar.Text = WebBrowser.Source.AbsoluteUri;
-            }
-        }
-
-        private void Tabs_Loaded(object sender, RoutedEventArgs e)
-        {
-            // not really needed. we already have a new tab page and also new TabViewItem here does nothing. Also, if this code is used again it should be new WebViewTab()
-            //Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
-            //new TabViewItem()
-            //{
-
-            //    Content = new WebView2(),
-            //    IconSource = new Microsoft.UI.Xaml.Controls.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false },
-            //    Header = WebBrowser.CoreWebView2.DocumentTitle.ToString()
-            //};
+            if (WebBrowser != null) UpdateComponents();
         }
 
         private void Tab_NavigationCompleted(WebViewTab sender)
         {
-            var WebBrowser = sender.WebBrowser;
-            SearchBar.Text = WebBrowser.Source.AbsoluteUri;
-            RefreshButton.Visibility = Visibility.Visible;
-            StopRefreshButton.Visibility = Visibility.Collapsed;
-
-            //history
-            DataTransfer datatransfer = new DataTransfer();
-            if (!string.IsNullOrEmpty(SearchBar.Text))
+            UpdateComponents();
+            WebBrowser.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
             {
-                datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
-            }
-            if (WebBrowser.Source.AbsoluteUri.Contains("https"))
-            {
-                //change icon to lock
-                SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                SSLIcon.Glyph = "\xE72E";
-
-                ToolTip tooltip = new ToolTip
+                Boolean fullScreen = WebBrowser.CoreWebView2.ContainsFullScreenElement;
+                var view = ApplicationView.GetForCurrentView();
+                if (fullScreen)
                 {
-                    Content = "This website has a SSL certificate"
-                };
-                ToolTipService.SetToolTip(SSLButton, tooltip);
-
-            }
-            else
-            {
-                //change icon to warning
-                SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                SSLIcon.Glyph = "\xE7BA";
-                ToolTip tooltip = new ToolTip
+                    if (view.TryEnterFullScreenMode())
+                    {
+                        ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                        /** 
+                         * TODO: HIDE TOOLBAR ON FULLSCREEN
+                        **/
+                        // The SizeChanged event will be raised when the entry to full-screen mode is complete.
+                    }
+                }
+                else
                 {
-                    Content = "This website is unsafe and doesn't have a SSL certificate"
-                };
-                ToolTipService.SetToolTip(SSLButton, tooltip);
-
-            }
+                    view.ExitFullScreenMode();
+                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
+                    /** 
+                     * TODO: SHOW TOOLBAR ON FULLSCREEN
+                    **/
+                    // The SizeChanged event will be raised when the exit from full-screen mode is complete.
+                }
+                Tabs.IsAddTabButtonVisible = !fullScreen;
+            };
         }
 
         private void Tab_NavigationStarting(WebViewTab obj)
@@ -265,6 +188,107 @@ namespace Yttrium
             StopRefreshButton.Visibility = Visibility.Visible;
         }
 
+        private void LoadWebsite(string url)
+        {
+            // Loads the website URL
+            // Or searches for it for validation fails
+            WebBrowser.Source = ValidateUrl(url);
+
+            // Updates the UI
+            UpdateComponents();
+
+            // Saves the search history
+            DataTransfer datatransfer = new DataTransfer();
+            if (!string.IsNullOrEmpty(SearchBar.Text))
+            {
+                datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
+            }
+        }
+
+        private Uri ValidateUrl(string url)
+        {
+            String searchCopy = url;
+            searchCopy = searchCopy.Split('?')[0];
+            searchCopy = searchCopy.Split('/').Last();
+            Boolean hasValidPrefix = searchCopy.Contains('.');
+            Uri searchQuery;
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) &&
+                (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+            {
+                searchQuery = new Uri(url);
+            }
+            else if (!url.Contains("://") && hasValidPrefix)
+            {
+                url = "https://" + url;
+                searchQuery = new Uri(url);
+            }
+            else
+            {
+                searchQuery = new Uri("https://www.google.com/search?q=" + url);
+            }
+            return searchQuery;
+        }
+
+        public static bool ValidateUrl(string url, out string validatedUrl)
+        {
+            String searchCopy = url;
+            searchCopy = searchCopy.Split('?')[0];
+            searchCopy = searchCopy.Split('/').Last();
+            Boolean hasValidPrefix = searchCopy.Contains('.');
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) &&
+                (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+            {
+                validatedUrl = url;
+            }
+            else if (!url.Contains("://") && hasValidPrefix)
+            {
+                url = "https://" + url;
+                validatedUrl = url;
+            }
+            else
+            {
+                validatedUrl = "https://www.google.com/search?q=" + url;
+            }
+            return validatedUrl != "";
+        }
+
+        private void UpdateComponents()
+        {
+            SearchBar.Text = WebBrowser.Source.AbsoluteUri ==
+                SettingsPage_General.NewTabHomepage ? "" : WebBrowser.Source.AbsoluteUri;
+            RefreshButton.Visibility = Visibility.Visible;
+            StopRefreshButton.Visibility = Visibility.Collapsed;
+
+            SSLIcon.Foreground = null;
+            SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+            String tooltipMessage = "";
+            ToolTip tooltip = new ToolTip
+            {
+                Content = tooltipMessage
+            };
+
+            if (WebBrowser.Source.AbsoluteUri.Contains("https"))
+            {
+                //change icon to lock
+                SSLIcon.Glyph = "\xE72E";
+                tooltipMessage = "This website has a SSL certificate";
+                SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 68, 210, 78));
+
+            }
+            else
+            {
+                //change icon to warning
+                SSLIcon.Glyph = "\xE7BA";
+                tooltipMessage = "This website is unsafe and doesn't have a SSL certificate";
+                SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 191, 0));
+            }
+
+            ToolTipService.SetToolTip(SSLButton, tooltip);
+
+        }
+
+        
     }
+
 }
 

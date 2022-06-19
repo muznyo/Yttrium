@@ -164,6 +164,26 @@
 
             </Button>
 
+        </Grid>
+
+        <Grid x:Name="ContentBarGrid"
+              Grid.Row="1"
+              Canvas.ZIndex="2">
+            <!-- title bar grid -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="35" />
+                <!-- nav buttons -->
+                <ColumnDefinition Width="2*" />
+                <!-- search bar column -->
+                <ColumnDefinition />
+                <!-- settings column -->
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
             <winui:TabView x:Name="Tabs"
                            Grid.ColumnSpan="4"
                            Grid.Row="1"
@@ -172,8 +192,7 @@
                            VerticalAlignment="Stretch"
                            AddTabButtonClick="Tabs_AddTabButtonClick"
                            TabCloseRequested="Tabs_TabCloseRequested"
-                           SelectionChanged="Tabs_SelectionChanged"
-                           Loaded="Tabs_Loaded">
+                           SelectionChanged="Tabs_SelectionChanged">
                 <winui:TabView.TabStripHeader>
                     <Grid/>
                 </winui:TabView.TabStripHeader>

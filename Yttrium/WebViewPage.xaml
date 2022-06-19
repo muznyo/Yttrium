@@ -15,7 +15,7 @@
                 NavigationCompleted="WebBrowser_NavigationCompleted"
                 x:Name="WebBrowser"
                 Visibility="Visible"
-                Source="https://google.com/"
+                Source="https://yttrium/index.html"
                 x:FieldModifier="public"/>
     </Frame>
 </winui:TabViewItem>
