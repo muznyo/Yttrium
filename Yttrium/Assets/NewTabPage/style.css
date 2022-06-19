@@ -1,11 +1,3 @@
-:root {
-    --sys-accent-color: rgba(var(--sys-accent-prop), var(--sys-accent-alpha));
-    --sys-accent-light-3-color: rgba(var(--sys-accent-light-3-prop), var(--sys-accent-light-3-alpha));
-    --sys-error-accent-color: rgba(var(--sys-error-accent-prop), var(--sys-error-accent-alpha));
-    --sys-hover-accent-color: rgba(var(--sys-hover-accent-color), var(--sys-hover-accent-color));
-    --sys-border-radius: 0.5rem;
-}
-
 body {
     color: #000000;
 }
@@ -16,15 +8,6 @@ body {
     justify-content: center;
 }
 
-button {
-    background: var(--sys-accent-color);
-    filter: contrast(50%) brightness(140%);
-    width: 50px;
-    height: 50px;
-    color: black;
-}
-
-
 .content {
     position: absolute;
     top: 40%;
@@ -32,7 +15,7 @@ button {
 }
 
 .name {
-    margin-left: 10px;
+    margin-left: 20px;
     font-size: 8vw;
 }
 

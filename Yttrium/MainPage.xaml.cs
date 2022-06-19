@@ -39,14 +39,16 @@ namespace Yttrium
             this.InitializeComponent();
             // Enables Navigation Cache
             this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
-
+            SettingsData settings = new SettingsData();
+            settings.CreateSettingsFile();
             LoadSettings();
         }
 
         private void LoadSettings()
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings != null) {
+            if (localSettings != null)
+            {
 
             }
         }
@@ -287,7 +289,7 @@ namespace Yttrium
 
         }
 
-        
+
     }
 
 }
