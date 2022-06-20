@@ -11,10 +11,12 @@ namespace Yttrium
     /// </summary>
     public sealed partial class WebViewTab : TabViewItem
     {
+        public event Action<WebView2> CustomLaunch = null;
         public event Action<WebViewTab> NavigationCompleted = null;
         public event Action<WebViewTab> NavigationStarting = null;
         public event Action<WebViewTab> SourceChanged = null;
         public event Action<WebViewTab> ContentLoading = null;
+        public event Action<WebViewTab, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs> NewTabRequested = null;
 
         string OriginalUserAgent;
         string GoogleSignInUserAgent;
@@ -27,7 +29,10 @@ namespace Yttrium
             {
                 WebBrowser.CoreWebView2.SetVirtualHostNameToFolderMapping(
                     "yttrium", "Assets/NewTabPage", Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
-                WebBrowser.Source = new Uri(SettingsPage_General.ObtainHomepage);
+                if (CustomLaunch == null)
+                    WebBrowser.Source = new Uri(SettingsPage_General.ObtainHomepage);
+                else
+                    CustomLaunch?.Invoke(WebBrowser);
                 WebBrowser.CacheMode = new BitmapCache();
                 // Google login fix
                 OriginalUserAgent = WebBrowser.CoreWebView2.Settings.UserAgent;
@@ -67,7 +72,7 @@ namespace Yttrium
 
         private void CoreWebView2_NewWindowRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs e)
         {
-            e.NewWindow = WebBrowser.CoreWebView2;
+            NewTabRequested?.Invoke(this, e);
         }
 
         // Handles progressing and refresh behavior

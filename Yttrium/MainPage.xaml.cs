@@ -35,6 +35,21 @@ namespace Yttrium
             }
         }
 
+        private WebViewTab newTab {
+            get
+            {
+                WebViewTab newTab = new WebViewTab();
+                newTab.NavigationCompleted += Tab_NavigationCompleted;
+                newTab.NavigationStarting += Tab_NavigationStarting;
+                newTab.SourceChanged += Tab_SourceChanged;
+                newTab.ContentLoading += Tab_ContentLoading;
+                newTab.NewTabRequested += Tab_NewTabRequested;
+                return newTab;
+            }
+        }
+
+        private bool navigationCompleted = false;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -63,13 +78,13 @@ namespace Yttrium
         //back navigation
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WebBrowser.CanGoBack) WebBrowser.GoBack();
+            WebBrowser.GoBack();
         }
 
         //forward navigation
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WebBrowser.CanGoForward) WebBrowser.GoForward();
+            WebBrowser.GoForward();
         }
 
         //refresh 
@@ -136,7 +151,7 @@ namespace Yttrium
         //add new tab
         private void Tabs_AddTabButtonClick(TabView sender, object args)
         {
-            sender.TabItems.Add(new WebViewTab());
+            sender.TabItems.Add(newTab);
             sender.SelectedItem = Tabs.TabItems.Last();
         }
 
@@ -163,16 +178,37 @@ namespace Yttrium
         private void Tab_SourceChanged(WebViewTab sender)
         {
             UpdateComponents();
+            // Saves the search history
+            DataTransfer datatransfer = new DataTransfer();
+            if (!string.IsNullOrEmpty(SearchBar.Text) && SearchBar.Text != SettingsPage_General.NewTabHomepage)
+            {
+                datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
+            }
         }
 
         private void Tab_ContentLoading(WebViewTab sender)
         {
+            navigationCompleted = false;
             RefreshButton.Visibility = Visibility.Collapsed;
             StopRefreshButton.Visibility = Visibility.Visible;
         }
 
+        private void Tab_NewTabRequested(WebViewTab sender, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs e)
+        {
+            WebViewTab newRequestedTab = newTab;
+            newRequestedTab.CustomLaunch += delegate
+            {
+                newRequestedTab.WebBrowser.Source = new Uri(e.Uri);
+            };
+            e.Handled = true;
+            Tabs.TabItems.Add(newRequestedTab);
+            Tabs.SelectedItem = Tabs.TabItems.Last();
+            UpdateComponents();
+        }
+
         private void Tab_NavigationCompleted(WebViewTab sender)
         {
+            navigationCompleted = true;
             UpdateComponents();
             WebBrowser.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
             {
@@ -204,8 +240,10 @@ namespace Yttrium
 
         private void Tab_NavigationStarting(WebViewTab obj)
         {
+            navigationCompleted = false;
             RefreshButton.Visibility = Visibility.Collapsed;
             StopRefreshButton.Visibility = Visibility.Visible;
+            UpdateComponents();
         }
 
         private void LoadWebsite(string url)
@@ -276,17 +314,16 @@ namespace Yttrium
         {
             SearchBar.Text = WebBrowser.Source.AbsoluteUri ==
                 SettingsPage_General.NewTabHomepage ? "" : WebBrowser.Source.AbsoluteUri;
-            RefreshButton.Visibility = Visibility.Visible;
-            StopRefreshButton.Visibility = Visibility.Collapsed;
-
+            if (navigationCompleted)
+            {
+                RefreshButton.Visibility = Visibility.Visible;
+                StopRefreshButton.Visibility = Visibility.Collapsed;
+            }
+            BackButton.IsEnabled = WebBrowser.CanGoBack;
+            ForwardButton.IsEnabled = WebBrowser.CanGoForward;
             SSLIcon.Foreground = null;
             SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-            String tooltipMessage = "";
-            ToolTip tooltip = new ToolTip
-            {
-                Content = tooltipMessage
-            };
-
+            string tooltipMessage;
             if (WebBrowser.Source.AbsoluteUri.Contains("https"))
             {
                 //change icon to lock
@@ -295,14 +332,25 @@ namespace Yttrium
                 SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 68, 210, 78));
 
             }
-            else
+            else if (WebBrowser.Source.AbsoluteUri.Contains("http"))
             {
                 //change icon to warning
                 SSLIcon.Glyph = "\xE7BA";
                 tooltipMessage = "This website is unsafe and doesn't have a SSL certificate";
                 SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 191, 0));
             }
+            else
+            {
+                //change icon to unkown
+                SSLIcon.Glyph = "\xE9CE";
+                tooltipMessage = "Website safety cannot be guaranted.";
+                SSLIcon.Foreground = null;
+            }
 
+            ToolTip tooltip = new ToolTip
+            {
+                Content = tooltipMessage
+            };
             ToolTipService.SetToolTip(SSLButton, tooltip);
 
         }
