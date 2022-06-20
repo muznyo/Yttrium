@@ -203,7 +203,8 @@
                     NavigationStarting="Tab_NavigationStarting" 
                     NavigationCompleted="Tab_NavigationCompleted"
                     SourceChanged="Tab_SourceChanged"
-                    ContentLoading="Tab_ContentLoading"/>
+                    ContentLoading="Tab_ContentLoading"
+                    NewTabRequested="Tab_NewTabRequested"/>
             </winui:TabView>
         </Grid>
     </Grid>
