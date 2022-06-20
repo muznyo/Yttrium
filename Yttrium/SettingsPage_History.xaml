@@ -8,6 +8,47 @@
       xmlns:winui="using:Microsoft.UI.Xaml.Controls"
       winui:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
+    <Page.Resources>
+        
+        <CollectionViewSource x:Name="HistoryData" IsSourceGrouped="True" />
+
+        <DataTemplate x:Key="HistoryListViewTemplate" x:DataType="local:HistoryData">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <BitmapIcon x:Name="Ellipse"
+                         Grid.RowSpan="2"
+                         Width ="32"
+                         Height="32"
+                         Margin="6"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         ShowAsMonochrome="False"
+                         UriSource="{x:Bind ICON}"/>
+                <TextBlock Grid.Column="1"
+                           Text="{x:Bind URLLabel}"
+                           x:Phase="1"
+                           MaxLines="1"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12,6,0,0"/>
+                <TextBlock Grid.Column="1"
+                           Grid.Row="1"
+                           Text="{x:Bind URL}"
+                           x:Phase="2"
+                           MaxLines="1"
+                           Style="{ThemeResource BodyTextBlockStyle}"
+                           Margin="12,0,0,6"/>
+            </Grid>
+        </DataTemplate>
+
+    </Page.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -29,25 +70,28 @@
                      BorderThickness="1"
                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
 
-                <!-- Expander in which is history -->
-                <winui:Expander Header="Full history"
-                                Margin="10,10,10,10"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch"
-                                VerticalAlignment="Stretch">
+                <ListView 
+                    ItemTemplate="{StaticResource HistoryListViewTemplate}"
+                    ItemsSource="{x:Bind HistoryData.View, Mode=OneWay}">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel x:Name="GroupedStackPanel" AreStickyGroupHeadersEnabled="False" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
 
-                    <winui:Expander.Content>
-                        <!-- Listview with history items -->
-                        <ListView x:Name="HistoryListView">
-                            <ListViewItem Content="Google.com"
-                                          Background="{ThemeResource LayerFillColorAltBrush}" />
-                        </ListView>
-                    </winui:Expander.Content>
-                </winui:Expander>
+                    <ListView.GroupStyle>
+                        <GroupStyle >
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate x:DataType="local:GroupInfoList">
+                                    <Border AutomationProperties.Name="{x:Bind Key}">
+                                        <TextBlock Text="{x:Bind Key}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="20"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
             </Border>
-
-
-
         </Grid>
 
     </Grid>

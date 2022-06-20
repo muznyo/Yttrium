@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.IO;
 using System.Linq;
-using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -32,6 +31,14 @@ namespace Yttrium
             get
             {
                 return Tabs.SelectedItem is WebViewTab webViewPage ? webViewPage.TabContent : null;
+            }
+        }
+
+        public String TabTitle
+        {
+            get
+            {
+                return Tabs.SelectedItem is WebViewTab webViewPage ? webViewPage.Header.ToString() : null;
             }
         }
 
@@ -182,7 +189,7 @@ namespace Yttrium
             DataTransfer datatransfer = new DataTransfer();
             if (!string.IsNullOrEmpty(SearchBar.Text) && SearchBar.Text != SettingsPage_General.NewTabHomepage)
             {
-                datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
+                datatransfer.SaveSearchTerm(SearchBar.Text, TabTitle, WebBrowser.Source.AbsoluteUri);
             }
         }
 
@@ -210,32 +217,35 @@ namespace Yttrium
         {
             navigationCompleted = true;
             UpdateComponents();
-            WebBrowser.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
+            if (WebBrowser != null)
             {
-                Boolean fullScreen = WebBrowser.CoreWebView2.ContainsFullScreenElement;
-                var view = ApplicationView.GetForCurrentView();
-                if (fullScreen)
+                WebBrowser.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
                 {
-                    if (view.TryEnterFullScreenMode())
+                    Boolean fullScreen = WebBrowser.CoreWebView2.ContainsFullScreenElement;
+                    var view = ApplicationView.GetForCurrentView();
+                    if (fullScreen)
                     {
-                        ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                        if (view.TryEnterFullScreenMode())
+                        {
+                            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
                         // Hides UI
-                        TitleBarGrid.Visibility = Visibility.Collapsed;
-                        Tabs.Margin = new Thickness(0, -86, 0, 0);
+                            TitleBarGrid.Visibility = Visibility.Collapsed;
+                            Tabs.Margin = new Thickness(0, -86, 0, 0);
                         // The SizeChanged event will be raised when the entry to full-screen mode is complete.
+                        }
                     }
-                }
-                else
-                {
-                    view.ExitFullScreenMode();
-                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
+                    else
+                    {
+                        view.ExitFullScreenMode();
+                        ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
                     // Shows UI
-                    TitleBarGrid.Visibility = Visibility.Visible;
-                    Tabs.Margin = new Thickness(0, -3, 0, 0);
+                        TitleBarGrid.Visibility = Visibility.Visible;
+                        Tabs.Margin = new Thickness(0, -3, 0, 0);
                     // The SizeChanged event will be raised when the exit from full-screen mode is complete.
-                }
-                Tabs.IsAddTabButtonVisible = !fullScreen;
-            };
+                    }
+                    Tabs.IsAddTabButtonVisible = !fullScreen;
+                };
+            }
         }
 
         private void Tab_NavigationStarting(WebViewTab obj)
@@ -259,7 +269,7 @@ namespace Yttrium
             DataTransfer datatransfer = new DataTransfer();
             if (!string.IsNullOrEmpty(SearchBar.Text) && SearchBar.Text != SettingsPage_General.NewTabHomepage)
             {
-                datatransfer.SaveSearchTerm(SearchBar.Text, WebBrowser.CoreWebView2.DocumentTitle, WebBrowser.Source.AbsoluteUri);
+                datatransfer.SaveSearchTerm(SearchBar.Text, TabTitle, WebBrowser.Source.AbsoluteUri);
             }
         }
 
@@ -312,47 +322,49 @@ namespace Yttrium
 
         private void UpdateComponents()
         {
-            SearchBar.Text = WebBrowser.Source.AbsoluteUri ==
-                SettingsPage_General.NewTabHomepage ? "" : WebBrowser.Source.AbsoluteUri;
-            if (navigationCompleted)
+            if (WebBrowser != null)
             {
-                RefreshButton.Visibility = Visibility.Visible;
-                StopRefreshButton.Visibility = Visibility.Collapsed;
-            }
-            BackButton.IsEnabled = WebBrowser.CanGoBack;
-            ForwardButton.IsEnabled = WebBrowser.CanGoForward;
-            SSLIcon.Foreground = null;
-            SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-            string tooltipMessage;
-            if (WebBrowser.Source.AbsoluteUri.Contains("https"))
-            {
-                //change icon to lock
-                SSLIcon.Glyph = "\xE72E";
-                tooltipMessage = "This website has a SSL certificate";
-                SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 68, 210, 78));
-
-            }
-            else if (WebBrowser.Source.AbsoluteUri.Contains("http"))
-            {
-                //change icon to warning
-                SSLIcon.Glyph = "\xE7BA";
-                tooltipMessage = "This website is unsafe and doesn't have a SSL certificate";
-                SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 191, 0));
-            }
-            else
-            {
-                //change icon to unkown
-                SSLIcon.Glyph = "\xE9CE";
-                tooltipMessage = "Website safety cannot be guaranted.";
+                SearchBar.Text = WebBrowser.Source.AbsoluteUri ==
+                    SettingsPage_General.NewTabHomepage ? "" : WebBrowser.Source.AbsoluteUri;
+                if (navigationCompleted)
+                {
+                    RefreshButton.Visibility = Visibility.Visible;
+                    StopRefreshButton.Visibility = Visibility.Collapsed;
+                }
+                BackButton.IsEnabled = WebBrowser.CanGoBack;
+                ForwardButton.IsEnabled = WebBrowser.CanGoForward;
                 SSLIcon.Foreground = null;
+                SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                string tooltipMessage;
+                if (WebBrowser.Source.AbsoluteUri.Contains("https"))
+                {
+                    //change icon to lock
+                    SSLIcon.Glyph = "\xE72E";
+                    tooltipMessage = "This website has a SSL certificate";
+                    SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 68, 210, 78));
+
+                }
+                else if (WebBrowser.Source.AbsoluteUri.Contains("http"))
+                {
+                    //change icon to warning
+                    SSLIcon.Glyph = "\xE7BA";
+                    tooltipMessage = "This website is unsafe and doesn't have a SSL certificate";
+                    SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 191, 0));
+                }
+                else
+                {
+                    //change icon to unkown
+                    SSLIcon.Glyph = "\xE9CE";
+                    tooltipMessage = "Website safety cannot be guaranted.";
+                    SSLIcon.Foreground = null;
+                }
+
+                ToolTip tooltip = new ToolTip
+                {
+                    Content = tooltipMessage
+                };
+                ToolTipService.SetToolTip(SSLButton, tooltip);
             }
-
-            ToolTip tooltip = new ToolTip
-            {
-                Content = tooltipMessage
-            };
-            ToolTipService.SetToolTip(SSLButton, tooltip);
-
         }
     }
 
