@@ -282,10 +282,6 @@ namespace Yttrium
             SSLIcon.Foreground = null;
             SSLIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
             String tooltipMessage = "";
-            ToolTip tooltip = new ToolTip
-            {
-                Content = tooltipMessage
-            };
 
             if (WebBrowser.Source.AbsoluteUri.Contains("https"))
             {
@@ -302,6 +298,11 @@ namespace Yttrium
                 tooltipMessage = "This website is unsafe and doesn't have a SSL certificate";
                 SSLIcon.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 191, 0));
             }
+
+            ToolTip tooltip = new ToolTip
+            {
+                Content = tooltipMessage
+            };
 
             ToolTipService.SetToolTip(SSLButton, tooltip);
 
