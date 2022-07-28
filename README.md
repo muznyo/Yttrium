@@ -7,7 +7,7 @@
 
 
 ##  How to install?
-1. Install [Edge WebView2 Core ](https://developer.microsoft.com/en-us/microsoft-edge/webview2/consumer/)if you don't have it installed yet.
+1. Install [Edge WebView2 Core ](https://developer.microsoft.com/en-us/microsoft-edge/webview2/consumer/)if you don't have it installed yet
 2. Log in to GitHub
 3. Go to Actions tab of the Yttrium repository
 4. Choose branch on the left side (experimental branch is currently worked on)
@@ -18,3 +18,4 @@
 9. Installed!
 
 #### Be aware that Yttrium is in its alpha stage and it's not finished yet!
+#### I am grateful for any contributions!
