@@ -165,9 +165,12 @@ namespace Yttrium
         //close tab
         private async void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            if (sender.TabItems.Count <= 1)
+            if (sender.TabItems.Count <= 1) {
+                WebBrowser.Close();
                 await ApplicationView.GetForCurrentView().TryConsolidateAsync();
+            }
             sender.TabItems.Remove(args.Tab);
+            (args.Tab as WebViewTab).WebBrowser.Close();
         }
 
         //opens about app dialog
@@ -185,12 +188,6 @@ namespace Yttrium
         private void Tab_SourceChanged(WebViewTab sender)
         {
             UpdateComponents();
-            // Saves the search history
-            DataTransfer datatransfer = new DataTransfer();
-            if (!string.IsNullOrEmpty(SearchBar.Text) && SearchBar.Text != SettingsPage_General.NewTabHomepage)
-            {
-                datatransfer.SaveSearchTerm(SearchBar.Text, TabTitle, WebBrowser.Source.AbsoluteUri);
-            }
         }
 
         private void Tab_ContentLoading(WebViewTab sender)
@@ -211,6 +208,12 @@ namespace Yttrium
             Tabs.TabItems.Add(newRequestedTab);
             Tabs.SelectedItem = Tabs.TabItems.Last();
             UpdateComponents();
+            // Saves the search history
+            DataTransfer datatransfer = new DataTransfer();
+            if (!string.IsNullOrEmpty(SearchBar.Text) && SearchBar.Text != SettingsPage_General.NewTabHomepage)
+            {
+                datatransfer.SaveSearchTerm(SearchBar.Text, TabTitle, WebBrowser.Source.AbsoluteUri);
+            }
         }
 
         private void Tab_NavigationCompleted(WebViewTab sender)
@@ -219,6 +222,12 @@ namespace Yttrium
             UpdateComponents();
             if (WebBrowser != null)
             {
+                // Saves the search history
+                DataTransfer datatransfer = new DataTransfer();
+                if (!string.IsNullOrEmpty(SearchBar.Text) && SearchBar.Text != SettingsPage_General.NewTabHomepage)
+                {
+                    datatransfer.SaveSearchTerm(SearchBar.Text, TabTitle, WebBrowser.Source.AbsoluteUri);
+                }
                 WebBrowser.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
                 {
                     Boolean fullScreen = WebBrowser.CoreWebView2.ContainsFullScreenElement;

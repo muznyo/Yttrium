@@ -10,16 +10,15 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Yttrium
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+
     public sealed partial class SettingsPage_History : Page
     {
+        List<string> timestamps = new List<string>();
+
         public SettingsPage_History()
         {
             this.InitializeComponent();
-
-            
+            timestamps.Clear();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -28,26 +27,49 @@ namespace Yttrium
         }   
 
 
-        public static async Task<ObservableCollection<GroupInfoList>> GetHistoryGroupedAsync()
+        public async Task<ObservableCollection<GroupInfoList>> GetHistoryGroupedAsync()
         {
-            // Grab Contact objects from pre-existing list (list is returned from function GetContactsAsync())
             var query = from item in await new DataTransfer().GetHistoryAsync(null, null)
-
-                            // Group the items returned from the query, sort and select the ones you want to keep
-                        group item by item.FormattedDate into g
-                        orderby g.Key
-
-                        // GroupInfoList is a simple custom class that has an IEnumerable type attribute, and
-                        // a key attribute. The IGrouping-typed variable g now holds the Contact objects,
-                        // and these objects will be used to create a new GroupInfoList object.
-                        select new GroupInfoList(g) { Key = g.Key };
-
-            return new ObservableCollection<GroupInfoList>(query);
+                        group item by item.FormattedDate.Date.ToString("dd MMMM yyyy") into g
+                        orderby DateTime.Parse(g.Key).Date descending
+                        select new GroupInfoList(g)
+                        {
+                            Key = FormattedDate(DateTime.Parse(g.Key).Date)
+                        };
+            var collection = new ObservableCollection<GroupInfoList>(query);
+            if (collection.Count > 0)
+            {
+                HistoryCard.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                NoHistoryCard.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            return collection;
         }
 
+        public string FormattedDate(DateTime date)
+        {
+            var todayDate = DateTime.Now.ToString("dddd - dd MMMM yyyy");
+            var targetDate = date.ToString("dddd - dd MMMM yyyy");
+            switch (targetDate.CompareTo(todayDate))
+            {
+                case 0: return "Today " + date.ToString("- dd MMM yyyy");
+            };
+            todayDate = DateTime.Now.ToString("MMMM yyyy");
+            targetDate = date.ToString("MMMM");
+            switch (targetDate.CompareTo(todayDate))
+            {
+                case 0: return "Last Month " + date.ToString("- dd MMM yyyy");
+            };
+            return date.ToString("dddd - dd MMMM yyyy");
+        }
 
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is HistoryData item)
+            {
+                
+            }
+        }
     }
-
 
     // GroupInfoList class definition:
     public class GroupInfoList : List<object>
@@ -58,10 +80,8 @@ namespace Yttrium
         public object Key { get; set; }
     }
 
-
     public class HistoryData
     {
-
         public Uri ICON { 
             get
             {
@@ -72,24 +92,17 @@ namespace Yttrium
         public string URLLabel { get; set; }
         public string Timestamp { get; set; }
 
-        public string FormattedDate { get
+        public string ShortDate
+        {
+            get
             {
-                var todayDate = DateTime.Now.ToString("dddd (dd MMMM yyyy)");
-                var targetDate = DataTransfer.UnixTimeStampToDateTime(double.Parse(Timestamp)).ToString("dddd (dd MMMM yyyy)");
-                switch (targetDate.CompareTo(todayDate))
-                {
-                    case 0: return "Today";
-                    case 1: return "Yesterday";
-                    case 7: return "Last Week";
-                };
-                todayDate = DateTime.Now.ToString("MMMM yyyy");
-                targetDate = DataTransfer.UnixTimeStampToDateTime(double.Parse(Timestamp)).ToString("MMMM");
-                switch (targetDate.CompareTo(todayDate))
-                {
-                    case 0: return "Last Month";
-                    case 1: return "Two Months Ago";
-                };
-                return DataTransfer.UnixTimeStampToDateTime(double.Parse(Timestamp)).ToString("dddd (dd MMMM yyyy)");
+                return FormattedDate.ToString("HH:mm");
+            }
+        }
+
+        public DateTime FormattedDate { get
+            {
+                return DataTransfer.UnixTimeStampToDateTime(double.Parse(Timestamp));
             } 
         }
 

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 
@@ -40,6 +43,41 @@ namespace Yttrium
             //saves history to settings.xml
             SaveDocument(doc);
 
+        }
+
+        public async void RemoveBatchHistoryAsync(List<string> timestamps)
+        {
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(filename);
+            XDocument settings = await XDocumentLoad();
+            foreach (string timestamp in timestamps)
+            {
+                var doc = settings.Element("history")
+                .Elements("historyitem")
+                .Where(e => e.Element("time").Value == timestamp);
+                doc.Remove();
+            }
+            settings.Save(file.Path);
+        }
+
+        public async void RemoveSingleHistoryAsync(string timestamp)
+        {
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(filename);
+            XDocument settings = await XDocumentLoad();
+            var doc = settings.Element("history")
+                .Elements("historyitem")
+                .Where(e => e.Element("time").Value == timestamp);
+            doc.Remove();
+            settings.Save(file.Path);
+        }
+
+        public async void ClearHistoryAsync()
+        {
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(filename);
+            XDocument settings = await XDocumentLoad();
+            var doc = settings.Element("history")
+                .Elements("historyitem");
+            doc.Remove();
+            settings.Save(file.Path);
         }
 
         // Parse History
@@ -112,7 +150,21 @@ namespace Yttrium
             return result;
         }
 
+        private async Task<XDocument> XDocumentLoad()
+        {
+            XDocument result = null;
+
+            await Task.Run(async () =>
+            {
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(filename);
+                XDocument doc = XDocument.Load(File.OpenText(file.Path), LoadOptions.PreserveWhitespace);
+                result = doc;
+            });
+            return result;
+        }
+
         //saves history to settings.xml
+
         private async void SaveDocument(XmlDocument doc)
         {
             var file = await ApplicationData.Current.LocalFolder.GetFileAsync(filename);

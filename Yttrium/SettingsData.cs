@@ -22,9 +22,11 @@ namespace Yttrium
                 using (IRandomAccessStream writestream = await storagefile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     Stream s = writestream.AsStreamForWrite();
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.Async = true;
-                    settings.Indent = true;
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Async = true,
+                        Indent = true
+                    };
                     using (XmlWriter writer = XmlWriter.Create(s, settings))
                     {
                         writer.WriteStartDocument();
@@ -45,7 +47,8 @@ namespace Yttrium
                     }
                 }
 
-                await Windows.System.Launcher.LaunchFileAsync(storagefile);
+                // No need to open the settings file on launch.
+                //await Windows.System.Launcher.LaunchFileAsync(storagefile);
             }
             catch
             {

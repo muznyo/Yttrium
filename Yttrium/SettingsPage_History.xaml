@@ -15,14 +15,23 @@
         <DataTemplate x:Key="HistoryListViewTemplate" x:DataType="local:HistoryData">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <BitmapIcon x:Name="Ellipse"
+                <Grid Grid.Column="0" Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <BitmapIcon x:Name="Ellipse"
                          Grid.RowSpan="2"
                          Width ="32"
                          Height="32"
@@ -31,20 +40,29 @@
                          HorizontalAlignment="Center"
                          ShowAsMonochrome="False"
                          UriSource="{x:Bind ICON}"/>
-                <TextBlock Grid.Column="1"
+                    <TextBlock Grid.Column="1"
                            Text="{x:Bind URLLabel}"
                            x:Phase="1"
                            MaxLines="1"
                            Style="{ThemeResource BaseTextBlockStyle}"
                            Margin="12,6,0,0"/>
-                <TextBlock Grid.Column="1"
+                    <TextBlock Grid.Column="1"
                            Grid.Row="1"
                            Text="{x:Bind URL}"
                            x:Phase="2"
                            MaxLines="1"
                            Style="{ThemeResource BodyTextBlockStyle}"
                            Margin="12,0,0,6"/>
+                </Grid>
+
+                <TextBlock Grid.Column="2"
+                           Grid.Row="0"
+                           Text="{x:Bind ShortDate}"
+                           MaxLines="1"
+                           Style="{ThemeResource BodyTextBlockStyle}"
+                           Margin="12,8,24,0" Height="32"/>
             </Grid>
+            
         </DataTemplate>
 
     </Page.Resources>
@@ -55,6 +73,10 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
+        <StackPanel Grid.Column="0" Padding="55,48,12,0">
+            <Button x:Name="DeleteHistory" Content="Delete all history"/>
+        </StackPanel>
+
         <Grid x:Name="HistoryListGrid"
               Grid.Column="1">
             <Grid.RowDefinitions>
@@ -62,20 +84,39 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
+            <Border  Grid.Row="1"
+                     Background="{ThemeResource LayerFillColorDefaultBrush}"
+                     Margin="16"
+                     CornerRadius="8"
+                     BorderThickness="1"
+                     x:Name="NoHistoryCard"
+                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Visibility="Visible">
+
+                <TextBlock Grid.Column="1"
+                           Text="No history saved."
+                           MaxLines="1"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12" Width="Auto" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+
             <!-- Card -->
             <Border  Grid.Row="1"
                      Background="{ThemeResource LayerFillColorDefaultBrush}"
                      Margin="16"
                      CornerRadius="8"
                      BorderThickness="1"
-                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                     x:Name="HistoryCard"
+                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Visibility="Collapsed">
 
-                <ListView 
+                <ListView
+                    x:Name="HistoryList"
+                    SelectionMode="Multiple"
+                    SelectionChanged="ListView_SelectionChanged"
                     ItemTemplate="{StaticResource HistoryListViewTemplate}"
                     ItemsSource="{x:Bind HistoryData.View, Mode=OneWay}">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsStackPanel x:Name="GroupedStackPanel" AreStickyGroupHeadersEnabled="False" />
+                            <ItemsStackPanel x:Name="GroupedStackPanel" AreStickyGroupHeadersEnabled="True" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
 
@@ -84,7 +125,11 @@
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate x:DataType="local:GroupInfoList">
                                     <Border AutomationProperties.Name="{x:Bind Key}">
-                                        <TextBlock Text="{x:Bind Key}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="20"/>
+                                        <TextBlock 
+                                            Text="{x:Bind Key}" 
+                                            Style="{ThemeResource TitleTextBlockStyle}" 
+                                            Margin="4,8,4,8"
+                                            FontSize="20"/>
                                     </Border>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>

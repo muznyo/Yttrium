@@ -53,6 +53,8 @@ namespace Yttrium
         private void CoreWebView2_SourceChanged(Microsoft.Web.WebView2.Core.CoreWebView2 sender,
             Microsoft.Web.WebView2.Core.CoreWebView2SourceChangedEventArgs args) => SourceChanged?.Invoke(this);
 
+        private void CoreWebView2_NewWindowRequested(object sender,
+            Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs e) => NewTabRequested?.Invoke(this, e);
 
         public void WebBrowser_NavigationCompleted(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
         {
@@ -70,16 +72,22 @@ namespace Yttrium
             NavigationCompleted?.Invoke(this);
         }
 
-        private void CoreWebView2_NewWindowRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs e)
-        {
-            NewTabRequested?.Invoke(this, e);
-        }
-
         // Handles progressing and refresh behavior
         public void WebBrowser_NavigationStarting(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs args)
         {
             var isGoogleLogin = new Uri(args.Uri).Host.Contains("accounts.google.com");
             WebBrowser.CoreWebView2.Settings.UserAgent = isGoogleLogin ? GoogleSignInUserAgent : OriginalUserAgent;
+            // Update Tab Header
+            try
+            {
+                if (WebBrowser.Source.AbsoluteUri != SettingsPage_General.NewTabHomepage)
+                {
+                    Uri icoURI = new Uri("https://www.google.com/s2/favicons?sz=64&domain_url=" + WebBrowser.Source);
+                    IconSource = new BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
+                    Header = WebBrowser.CoreWebView2.DocumentTitle.ToString();
+                }
+            }
+            catch { }
             NavigationStarting?.Invoke(this);
         }
     }
